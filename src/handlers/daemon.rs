@@ -7,8 +7,7 @@ use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde::Deserialize;
 
-use crate::control_client::connect;
-use crate::handlers::{error_envelope, wire_response};
+use crate::handlers::{connect, error_envelope, wire_response};
 use crate::server::AppState;
 
 pub async fn status(State(state): State<AppState>) -> Response {

@@ -12,8 +12,7 @@ use axum::Json;
 use serde::Deserialize;
 use serde_json::Value;
 
-use crate::control_client::connect;
-use crate::handlers::wire_response;
+use crate::handlers::{connect, wire_response};
 use crate::server::AppState;
 
 #[derive(Debug, Default, Deserialize)]

@@ -12,6 +12,9 @@ pub mod queue;
 pub mod subject;
 pub mod workflows;
 
+use std::path::Path;
+
+use animus_control_protocol::client::ControlClient;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
@@ -54,6 +57,30 @@ pub fn wire_response<T: Serialize>(result: anyhow::Result<T>) -> Response {
                 Json(error_envelope("wire_error", err.to_string(), 1)),
             )
                 .into_response()
+        }
+    }
+}
+
+pub async fn connect(socket_path: &Path) -> Result<ControlClient, (StatusCode, Json<Value>)> {
+    match ControlClient::connect(socket_path).await {
+        Ok(client) => Ok(client),
+        Err(err) => {
+            tracing::warn!(
+                error = %err,
+                socket = %socket_path.display(),
+                "control socket unreachable"
+            );
+            Err((
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(error_envelope(
+                    "daemon_unreachable",
+                    format!(
+                        "could not reach animus daemon at {}: {err}",
+                        socket_path.display()
+                    ),
+                    20,
+                )),
+            ))
         }
     }
 }

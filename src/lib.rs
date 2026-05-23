@@ -5,7 +5,6 @@
 
 pub mod backend;
 pub mod config;
-pub mod control_client;
 pub mod handlers;
 pub mod server;
 
